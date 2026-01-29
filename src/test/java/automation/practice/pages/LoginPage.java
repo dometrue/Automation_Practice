@@ -5,31 +5,20 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-/**
- * LoginPage class
- * -----------------
- * Represents the login page.
- * Encapsulates all elements and interactions for login.
- * Uses explicit waits to handle slow page loads reliably.
- */
 public class LoginPage {
 
-    private WebDriver driver;
-    private WebDriverWait wait;
+    private final WebDriver driver;
+    private final WebDriverWait wait;
 
-    // Locators for login page elements
-    private By usernameField = By.id("user-name");
-    private By passwordField = By.id("password");
-    private By loginButton = By.id("login-button");
-    private By errorMessage = By.cssSelector("[data-test='error']");
+    private final By usernameField = By.id("user-name");
+    private final By passwordField = By.id("password");
+    private final By loginButton = By.id("login-button");
+    private final By errorMessage = By.cssSelector("[data-test='error']");
 
-    // Constructor receives WebDriver and WebDriverWait
     public LoginPage(WebDriver driver, WebDriverWait wait) {
         this.driver = driver;
         this.wait = wait;
     }
-
-    // ---------------- Actions ----------------
 
     public void enterUsername(String username) {
         wait.until(ExpectedConditions.visibilityOfElementLocated(usernameField))
@@ -46,16 +35,18 @@ public class LoginPage {
                 .click();
     }
 
-    // Business-level action: performs full login
     public void login(String username, String password) {
         enterUsername(username);
         enterPassword(password);
         clickLogin();
     }
 
-    // Check if error message is visible (for failed login)
     public boolean isErrorDisplayed() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessage))
-                .isDisplayed();
+        try {
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessage))
+                    .isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
