@@ -3,39 +3,38 @@ package automation.practice.base;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-
-import java.time.Duration;
 
 public class BaseTest {
 
     protected WebDriver driver;
-    protected WebDriverWait wait;
 
-    @BeforeMethod(alwaysRun = true)
+    @BeforeMethod
     public void setUp() {
-        System.out.println("\n==============================");
-        System.out.println("STARTING TEST");
-        System.out.println("==============================");
 
+        // Automatically resolve the correct ChromeDriver version
         WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://www.saucedemo.com/");
 
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        ChromeOptions options = new ChromeOptions();
+
+        // Run in headless mode for CI (Jenkins has no UI)
+        options.addArguments("--headless=new");
+
+        // Required for running Chrome in CI environments
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+
+        driver = new ChromeDriver(options);
+        driver.manage().window().maximize();
     }
 
-    @AfterMethod(alwaysRun = true)
+    @AfterMethod
     public void tearDown() {
         if (driver != null) {
             driver.quit();
         }
-
-        System.out.println("==============================");
-        System.out.println("TEST FINISHED");
-        System.out.println("==============================\n");
     }
 }
