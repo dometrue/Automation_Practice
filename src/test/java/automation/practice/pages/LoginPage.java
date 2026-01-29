@@ -5,6 +5,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+
 public class LoginPage {
 
     private WebDriver driver;
@@ -15,9 +17,10 @@ public class LoginPage {
     private By loginButton = By.id("login-button");
     private By errorMessage = By.cssSelector("[data-test='error']");
 
-    public LoginPage(WebDriver driver, WebDriverWait wait) {
+    // Only driver is passed now
+    public LoginPage(WebDriver driver) {
         this.driver = driver;
-        this.wait = wait;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     public void enterUsername(String username) {

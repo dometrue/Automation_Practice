@@ -10,7 +10,8 @@ public class LoginTest extends BaseTest {
 
     @Test(priority = 1, groups = "ui")
     public void userCanLoginWithValidCredentials() {
-        LoginPage loginPage = new LoginPage(driver, wait);
+
+        LoginPage loginPage = new LoginPage(driver); // only driver
         loginPage.login("standard_user", "secret_sauce");
 
         InventoryPage inventoryPage = new InventoryPage(driver);
@@ -22,7 +23,8 @@ public class LoginTest extends BaseTest {
 
     @Test(priority = 2, groups = "ui")
     public void loginFailsWithInvalidPassword() {
-        LoginPage loginPage = new LoginPage(driver, wait);
+
+        LoginPage loginPage = new LoginPage(driver); // only driver
         loginPage.login("standard_user", "wrong_password");
 
         Assert.assertTrue(
