@@ -16,7 +16,7 @@ pipeline {
 
         stage('Build & API Tests') {
             steps {
-                bat 'mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testng-api.xml'
+                bat 'mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testng.xml'
             }
         }
 
