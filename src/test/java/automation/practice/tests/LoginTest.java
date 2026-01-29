@@ -6,6 +6,13 @@ import automation.practice.pages.LoginPage;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+/**
+ * LoginTest class
+ * -----------------
+ * Contains all login-related test cases.
+ * Inherits BaseTest to automatically get WebDriver setup/teardown.
+ */
+
 public class LoginTest extends BaseTest {
 
     @Test(priority = 1, groups = "ui")
@@ -31,9 +38,11 @@ public class LoginTest extends BaseTest {
         // Navigate to login page first
         driver.get("https://www.saucedemo.com/");
 
+        // 1️⃣ Attempt login with wrong password
         LoginPage loginPage = new LoginPage(driver, wait);
         loginPage.login("standard_user", "wrong_password");
 
+        // 2️⃣ Verify error message is displayed
         Assert.assertTrue(
                 loginPage.isErrorDisplayed(),
                 "Error message is not displayed for invalid login"
