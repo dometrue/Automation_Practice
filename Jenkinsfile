@@ -18,7 +18,7 @@ pipeline {
         stage('Clean & Build') {
             steps {
                 // Clean target and run tests
-                sh 'mvn clean test'
+                bat 'mvn clean test'
             }
         }
 
