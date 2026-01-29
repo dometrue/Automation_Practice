@@ -13,29 +13,34 @@ import java.time.Duration;
 public class BaseTest {
 
     protected WebDriver driver;
-    protected WebDriverWait wait; // <-- THIS was missing
+    protected WebDriverWait wait;
 
     @BeforeMethod
     public void setUp() {
 
-        // Automatically resolve correct ChromeDriver version
         WebDriverManager.chromedriver().setup();
-
         ChromeOptions options = new ChromeOptions();
 
-        // Headless mode for Jenkins / CI
-        options.addArguments("--headless=new");
+        // Run headless if -Dheadless=true is passed, otherwise normal
+        if (System.getProperty("headless", "false").equalsIgnoreCase("true")) {
+            options.addArguments("--headless=new");
+        }
 
-        // Stability flags for CI
+        // CI stability flags
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--remote-allow-origins=*");
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
 
-        // Explicit wait shared by all tests
+        // Explicit wait
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        // Navigate to login page
+        driver.get("https://www.saucedemo.com/"); // your login page URL
     }
 
     @AfterMethod
