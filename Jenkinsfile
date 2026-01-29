@@ -1,44 +1,34 @@
 pipeline {
-    agent any
-
-    tools {
-        // Use JDK 17 (matches your Maven config)
-        jdk 'jdk-17'
-        // Use Maven (configured in Jenkins global tools)
-        maven 'Maven 3.9.0'
-    }
+    agent any  // Runs on any available agent
 
     stages {
-        stage('Checkout') {
+        stage('Clean & Test') {
             steps {
-                checkout scm
+                // Run all tests (UI + API) via Maven
+                bat 'mvn clean test'  // Windows agent
+                // If Linux agent: sh 'mvn clean test'
             }
         }
 
-        stage('Clean & Build') {
+        stage('Generate Allure Report') {
             steps {
-                // Clean target and run tests
-                bat 'mvn clean test'
+                // Generate Allure report from results
+                bat 'allure generate target/allure-results --clean -o target/allure-report'
             }
         }
 
-        stage('Allure Report') {
+        stage('Publish Allure Report') {
             steps {
-                // Generate Allure report
-                sh 'mvn allure:report'
-            }
-            post {
-                always {
-                    // Publish Allure report in Jenkins
-                    allure includeProperties: false, reportBuildPolicy: ALWAYS, results: [[path: 'target/allure-results']]
-                }
+                // Open Allure report
+                bat 'allure open target/allure-report'
             }
         }
     }
 
     post {
         always {
-            junit 'target/surefire-reports/*.xml'
+            // Publish test results to Jenkins for visualization
+            junit '**/target/surefire-reports/*.xml'
         }
     }
 }
