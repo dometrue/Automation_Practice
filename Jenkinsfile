@@ -1,34 +1,35 @@
 pipeline {
-    agent any  // Runs on any available agent
+    agent any
+
+    tools {
+        jdk 'jdk-17'
+        maven 'maven-3.9.0'
+    }
 
     stages {
-        stage('Clean & Test') {
+
+        stage('Checkout') {
             steps {
-                // Run all tests (UI + API) via Maven
-                bat 'mvn clean test'  // Windows agent
-                // If Linux agent: sh 'mvn clean test'
+                checkout scm
             }
         }
 
-        stage('Generate Allure Report') {
+        stage('Build & API Tests') {
             steps {
-                // Generate Allure report from results
-                bat 'allure generate target/allure-results --clean -o target/allure-report'
+                bat 'mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testng-api.xml'
             }
         }
 
-        stage('Publish Allure Report') {
+        stage('UI Tests') {
             steps {
-                // Open Allure report
-                bat 'allure open target/allure-report'
+                bat 'mvn test -Dsurefire.suiteXmlFiles=src/test/resources/testng-ui.xml'
             }
         }
     }
 
     post {
         always {
-            // Publish test results to Jenkins for visualization
-            junit '**/target/surefire-reports/*.xml'
+            allure includeProperties: false, jdk: '', results: [[path: 'target/allure-results']]
         }
     }
 }
